@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 import { API_URL } from '../config'
 import type { Professor } from './types/professor.type'
 
-async function fetchProfessors(): Promise<Professor[]> {
-  const response = await fetch(`${API_URL}/professor`)
+async function fetchProfessors(name?: string): Promise<Professor[]> {
+  const query = name ? `?name=${encodeURIComponent(name)}` : ''
+  const response = await fetch(`${API_URL}/professor${query}`)
   if (!response.ok) throw new Error('Erro ao buscar professores')
   return response.json()
 }
@@ -14,10 +15,13 @@ async function fetchProfessorById(id: string): Promise<Professor> {
   return response.json()
 }
 
-export function useProfessors() {
+// Busca com filtro por nome — usada pelo formulário de busca da Home.
+// `enabled` evita disparar a requisição antes do usuário enviar o formulário.
+export function useProfessorSearch(name: string) {
   return useQuery({
-    queryKey: ['professors'],
-    queryFn: fetchProfessors,
+    queryKey: ['professors', name],
+    queryFn: () => fetchProfessors(name),
+    enabled: name.length > 0,
   })
 }
 
