@@ -10,22 +10,24 @@ import {
   UserRound,
   Search,
 } from "lucide-react";
-import { useProfessor } from "../../http/professor/useProfessor";
+import { useProfessor } from "../../../http/professor/useProfessor";
 import {
   useProfessorSubjects,
   useProfessorSubjectAverage,
-} from "../../http/professor-subject/useProfessorSubject";
-import { useRatings } from "../../http/ratings/useRatings";
+} from "../../../http/professor-subject/useProfessorSubject";
+import { useRatings } from "../../../http/ratings/useRatings";
+import type { Rating } from "../../../http/ratings/types/ratings.type";
 
 type ProfessorOverviewProps = {
   professorId?: string;
+  onAvaliarClick?: () => void;
 };
 
-export const ProfessorOverview = ({ professorId }: ProfessorOverviewProps) => {
+export const ProfessorOverview = ({ professorId, onAvaliarClick }: ProfessorOverviewProps) => {
   if (!professorId) {
     return <EmptyState />;
   }
-  return <ProfessorOverviewContent professorId={professorId} />;
+  return <ProfessorOverviewContent professorId={professorId} onAvaliarClick={onAvaliarClick} />;
 };
 
 const EmptyState = () => (
@@ -40,7 +42,13 @@ const EmptyState = () => (
   </div>
 );
 
-const ProfessorOverviewContent = ({ professorId }: { professorId: string }) => {
+const ProfessorOverviewContent = ({
+  professorId,
+  onAvaliarClick,
+}: {
+  professorId: string;
+  onAvaliarClick?: () => void;
+}) => {
   const { data: professor, isLoading: isLoadingProfessor } = useProfessor(professorId);
   const { data: professorSubjects } = useProfessorSubjects(professorId);
   const professorSubjectId = professorSubjects?.[0]?.id;
@@ -49,8 +57,8 @@ const ProfessorOverviewContent = ({ professorId }: { professorId: string }) => {
 
   const stats = useMemo(() => {
     const total = ratings?.length ?? 0;
-    const commentsCount = ratings?.filter((r) => r.comment).length ?? 0;
-    const recommendedCount = ratings?.filter((r) => r.value >= 4).length ?? 0;
+    const commentsCount = ratings?.filter((r: Rating) => r.comment).length ?? 0;
+    const recommendedCount = ratings?.filter((r: Rating) => r.value >= 4).length ?? 0;
     const recommendPct = total > 0 ? Math.round((recommendedCount / total) * 100) : 0;
 
     return [
@@ -64,7 +72,7 @@ const ProfessorOverviewContent = ({ professorId }: { professorId: string }) => {
   const distribution = useMemo(() => {
     const total = ratings?.length ?? 0;
     return [5, 4, 3, 2, 1].map((nota) => {
-      const count = ratings?.filter((r) => r.value === nota).length ?? 0;
+      const count = ratings?.filter((r: Rating) => r.value === nota).length ?? 0;
       const pct = total > 0 ? Math.round((count / total) * 100) : 0;
       return { nota, pct };
     });
@@ -99,6 +107,8 @@ const ProfessorOverviewContent = ({ professorId }: { professorId: string }) => {
             </div>
           </div>
           <button
+            type="button"
+            onClick={onAvaliarClick}
             className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white font-bold text-xs shrink-0"
             style={{ background: "linear-gradient(90deg,#8266F4 0%,#4B2FD9 100%)" }}
           >
@@ -146,8 +156,8 @@ const ProfessorOverviewContent = ({ professorId }: { professorId: string }) => {
 
         <div className="flex flex-col divide-y divide-[#F3F1FB]">
           {ratings
-            ?.filter((r) => r.comment)
-            .map((r) => (
+            ?.filter((r: Rating) => r.comment)
+            .map((r: Rating) => (
               <div key={r.id} className="flex gap-3 py-3 first:pt-0">
                 <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-[#DCD3F9]">
                   <UserRound size={18} color="#4B2FD9" />
