@@ -45,6 +45,7 @@ javascript-intermediario-frontend/
 │   ├── index.html
 │   └── README.md
 │
+├── docker-compose.yml
 ├── .gitignore
 ├── README.md
 └── .git
@@ -54,6 +55,7 @@ javascript-intermediario-frontend/
 
 - `modules/`: materiais de aula, exercícios, explicações e módulos didáticos organizados por etapa.
 - `professor-mensuring-front/`: projeto prático em React que é construído ao longo do curso.
+- `docker-compose.yml`: sobe a API (backend) que o projeto consome, sem precisar instalar Node/Postgres do backend na sua máquina.
 
 Essa separação permite que o aluno veja o conteúdo teórico e o projeto em paralelo, mantendo uma organização clara.
 
@@ -63,9 +65,10 @@ Essa separação permite que o aluno veja o conteúdo teórico e o projeto em pa
 
 Antes de começar, certifique-se de ter instalado:
 
-- Node.js 18+ 
+- Node.js 18+
 - npm ou yarn
 - Git
+- Docker Desktop (para rodar a API — veja a seção [Backend (API)](#backend-api))
 - VS Code (recomendado)
 
 ---
@@ -79,7 +82,11 @@ git clone <url-do-repositorio>
 cd javascript-intermediario-frontend
 ```
 
-### 2. Instale as dependências do projeto prático
+### 2. Suba a API (backend)
+
+Antes de rodar o front, é preciso ter a API no ar — veja o passo a passo completo na seção [Backend (API)](#backend-api) logo abaixo.
+
+### 3. Instale as dependências do projeto prático
 
 Entre na pasta do frontend:
 
@@ -88,7 +95,7 @@ cd professor-mensuring-front
 npm install
 ```
 
-### 3. Inicie o projeto
+### 4. Inicie o projeto
 
 ```bash
 npm run dev
@@ -100,9 +107,59 @@ A aplicação deve abrir no navegador em uma porta local do Vite, normalmente:
 http://localhost:5173
 ```
 
-### 4. Estude pelos módulos
+### 5. Estude pelos módulos
 
 Acesse a pasta `modules/` e siga na ordem dos módulos. Cada um deles representa uma etapa do curso e está conectado com a evolução do projeto em `professor-mensuring-front/`.
+
+---
+
+## Backend (API)
+
+O frontend consome uma API já pronta, disponibilizada via Docker — assim você não precisa instalar Node, Postgres nem clonar o código do backend na sua máquina.
+
+### 1. Suba a API com o Docker Compose
+
+Na raiz do repositório (onde está o `docker-compose.yml`), rode:
+
+```bash
+docker compose up
+```
+
+Isso vai:
+- baixar a imagem da API e do banco de dados (Postgres) automaticamente
+- rodar as migrations e popular o banco com dados de exemplo (professores, matérias e avaliações)
+- deixar a API no ar em `http://localhost:3333`
+
+Deixe esse terminal aberto enquanto estiver desenvolvendo o front. Para desligar, `Ctrl+C` ou, em outro terminal: `docker compose down`.
+
+### 2. Aponte o frontend para a API
+
+No projeto `professor-mensuring-front`, a URL da API já deve estar configurada assim:
+
+```ts
+export const API_URL = 'http://localhost:3333'
+```
+
+### Professores já cadastrados (seed)
+
+Assim que a API sobe, o banco já vem populado com estes professores de exemplo:
+
+- Lucas Garcia
+- Ana Beatriz Souza
+- Carlos Eduardo Lima
+- Mariana Ferreira
+- Rafael Costa
+- Juliana Almeida
+
+Cada um já tem matérias vinculadas e avaliações de exemplo, prontos para consumir via API.
+
+> ⚠️ **Desafio bônus**: propositalmente **não existe uma tela no frontend que liste os professores cadastrados**. Essa é uma lacuna intencional do projeto — cabe a você implementar essa listagem, consumindo o endpoint correspondente da API.
+
+### Perguntas comuns
+
+- **Precisa mexer no banco de dados?** Não. O `docker compose up` já cria as tabelas e popula com dados de exemplo automaticamente.
+- **Os dados que eu criar testando a API vão sumir?** Sim, toda vez que a API reinicia (ex: `docker compose down` seguido de `up`), o banco é resetado com os dados de exemplo de novo. Isso é proposital — mantém o ambiente de teste sempre limpo.
+- **Minha porta do Vite não é 5173, o que eu faço?** A API só aceita requisições vindas de `http://localhost:5173` por padrão (proteção de CORS). Se o seu front rodar em outra porta, avise quem preparou a API para ajustar essa configuração.
 
 ---
 
