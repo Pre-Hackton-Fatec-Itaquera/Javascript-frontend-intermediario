@@ -5,6 +5,7 @@
 Neste módulo você irá aprender:
 
 - O que é o Vite e por que ele é usado para iniciar o projeto.
+- Como criar um projeto Vite + React + TypeScript do zero.
 - Como o projeto React + TypeScript fica organizado logo na criação.
 - O papel de cada arquivo de configuração (`package.json`, `vite.config.ts`,
   `tsconfig*.json`, `index.html`).
@@ -31,6 +32,44 @@ npm run dev
 Esse comando (definido no `package.json`) sobe um servidor local de
 desenvolvimento para o frontend, do mesmo jeito que `npm run dev` sobe o
 servidor Fastify no backend.
+
+---
+
+## Criando o projeto do zero
+
+Antes de explorar a estrutura já pronta deste repositório, vale entender de onde
+ela vem. É assim que se cria um projeto igual a este, começando do zero:
+
+```bash
+npm create vite@latest professor-mensuring-front
+```
+
+O terminal vai fazer duas perguntas:
+
+1. **Framework** → escolha `React`
+2. **Variante** → escolha `TypeScript`
+
+Isso gera a pasta `professor-mensuring-front/` já com a estrutura mínima:
+`package.json`, `vite.config.ts`, `index.html`, `src/main.tsx`, entre outros —
+os mesmos arquivos explorados no restante deste módulo.
+
+Depois, entre na pasta, instale as dependências e suba o servidor:
+
+```bash
+cd professor-mensuring-front
+npm install
+npm run dev
+```
+
+Nesse ponto já existe a página padrão do Vite + React rodando em
+`http://localhost:5173`. A partir daí, os plugins extras (Tailwind, React
+Router, etc.) e a estrutura de pastas específica deste projeto são
+adicionados manualmente — é isso que o restante deste módulo, e os módulos
+seguintes, explicam.
+
+> 💡 Este repositório já vem com o projeto criado dentro de
+> `professor-mensuring-front/`. Você não precisa rodar `npm create vite@latest`
+> de novo — esse passo é só para entender de onde o projeto veio.
 
 ---
 
@@ -203,6 +242,7 @@ https://www.youtube.com/results?search_query=react+fireship
 Neste módulo aprendemos:
 
 - Por que o projeto usa Vite como ferramenta de desenvolvimento e build.
+- Como criar um projeto Vite + React + TypeScript do zero.
 - O papel de cada script do `package.json`.
 - Como os plugins do Vite (React e Tailwind) são configurados.
 - Como o `index.html` e o `main.tsx` conectam o React à página.
